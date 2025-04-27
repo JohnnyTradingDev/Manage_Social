@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Media Content Manager</title>
+  <title>Social Media Content Draftboard</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mui/material@5.13.0/dist/mui.min.css">
@@ -293,11 +293,12 @@
 <body>
   <div class="app-container">
     <div class="header">
-      <h1>Social Media Content Manager</h1>
+      <h1>Social Media Content Draftboard</h1>
       <div>
         <button class="btn btn-secondary" onclick="exportData()">Export</button>
         <input type="file" id="import-file" style="display: none;" onchange="importData(event)">
         <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Import</button>
+        <button class="btn btn-info" onclick="showHelpGuide()"><i class="material-icons" style="font-size: 16px; vertical-align: text-bottom;">help_outline</i> Guide</button>
         <button class="btn btn-primary" onclick="recoverFromBackup()">Khôi phục</button>
         <button class="btn btn-danger" onclick="confirmClearAllData()">Xóa tất cả</button>
       </div>
@@ -1447,6 +1448,102 @@
     // Thông báo thành công
     alert('Đã xóa tất cả dữ liệu thành công!');
   }
+  </script>
+  <!-- Simple Donation Link -->
+  <div style="text-align: center; margin: 30px auto 15px; font-size: 14px; color: #888;">
+    Thấy công cụ hữu ích? <a href="#" onclick="document.getElementById('donate-modal').style.display='block';return false;" style="color: #1976d2; text-decoration: none;">Ủng hộ mình nhé ☕❤️</a>
+    <div style="margin-top: 5px; font-size: 12px;">
+      <a href="https://johnnytrading.com" target="_blank" style="color: #1976d2; text-decoration: none;">johnnytrading.com</a> - Xem thêm công cụ hữu ích khác
+    </div>
+  </div>
+  
+  <!-- Donation Modal (hidden by default) -->
+  <div id="donate-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:500px; margin:auto;">
+      <div class="modal-header">
+        <h3 style="margin:0; font-size: 18px; color: #555;">❤️ Ủng hộ tác giả</h3>
+        <span style="cursor:pointer;" onclick="document.getElementById('donate-modal').style.display='none';">×</span>
+      </div>
+      <div style="padding:15px; font-size: 14px; color: #666;">
+        <p style="margin-top: 0;">Cảm ơn bạn đã sử dụng công cụ này! Mọi đóng góp đều giúp mình có thêm động lực phát triển nhiều công cụ miễn phí hơn nữa.</p>
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px;">
+          <div style="flex: 1; min-width: 180px; max-width: 220px; text-align: center;">
+            <h4 style="margin: 0 0 8px; font-size: 15px; color: #555;">Chuyển khoản</h4>
+            <img src="C:\Users\PC\Desktop\SUBMIT\QR_Code.png" alt="QR Code" style="max-width: 120px; margin: 0 auto; display: block; border-radius: 4px; border: 1px solid #eee;">
+            <div style="font-size: 11px; margin-top: 5px; color: #888;">Quét mã QR để chuyển khoản</div>
+          </div>
+          
+          <div style="flex: 1; min-width: 200px; max-width: 280px;">
+            <h4 style="margin: 0 0 8px; font-size: 15px; color: #555;">Ví tiền điện tử</h4>
+            <div style="text-align: left; font-size: 12px; background: #f9f9f9; padding: 10px; border-radius: 5px;">
+              <p style="margin: 5px 0;"><strong>BNB, ARB, OP, ETH:</strong><br>
+              <span style="word-break: break-all; color: #555; font-family: monospace;">0xef349438ffa31b0c252c7fcb0ac8910537df6a75</span></p>
+              
+              <p style="margin: 10px 0 5px;"><strong>SOL (USDT):</strong><br>
+              <span style="word-break: break-all; color: #555; font-family: monospace;">AErTASzb46sfe5eqbQ3dMuS3uiX4oFe1QTXxpAAbeYVh</span></p>
+              
+              <p style="margin: 10px 0 5px;"><strong>TON:</strong><br>
+              <span style="word-break: break-all; color: #555; font-family: monospace;">UQATqTW71i59pkWFnTAv9x0LAZyeH-8M898UAfPUM-gIO7jO</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('donate-modal').style.display='none';">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Guide Modal -->
+  <div class="modal" id="help-guide-modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <div class="modal-header">
+        <h2>How to Use Social Media Content Draftboard</h2>
+        <span style="cursor: pointer;" onclick="closeHelpGuide()">×</span>
+      </div>
+      
+      <div style="padding: 16px; max-height: 70vh; overflow-y: auto;">
+        <h3>Getting Started</h3>
+        <p>This tool helps you plan and manage your social media content across multiple platforms.</p>
+        
+        <h3>Basic Features</h3>
+        <ul>
+          <li><strong>Add Content:</strong> Click the + button in the bottom right or any + in the time slots</li>
+          <li><strong>Edit Content:</strong> Click on any existing post to edit it</li>
+          <li><strong>Mark as Posted:</strong> Click the circle/checkmark icon to toggle post status</li>
+          <li><strong>Filter Content:</strong> Use the filters at the top to view specific platforms or dates</li>
+        </ul>
+        
+        <h3>Data Management</h3>
+        <ul>
+          <li><strong>Import/Export:</strong> Backup your data or move it between devices</li>
+          <li><strong>Auto-Recovery:</strong> The system automatically backs up your data</li>
+        </ul>
+        
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+          <li><strong>Ctrl+S:</strong> Save current post</li>
+          <li><strong>Ctrl+N:</strong> Save current post and create new one</li>
+          <li><strong>Esc:</strong> Close modal</li>
+        </ul>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeHelpGuide()">Got it!</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Help guide functions
+    function showHelpGuide() {
+      document.getElementById('help-guide-modal').style.display = 'block';
+    }
+    
+    function closeHelpGuide() {
+      document.getElementById('help-guide-modal').style.display = 'none';
+    }
   </script>
 </body>
 </html>
