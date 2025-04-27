@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Content Manager</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mui/material@5.13.0/dist/mui.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      overflow-x: hidden;
+    }
+    
+    .app-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: white;
+    }
+    
+    .header {
+      background-color: #1976d2;
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      background-color: white;
+      padding: 16px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      position: relative;
+      z-index: 5;
+    }
+    
+    .calendar {
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #ddd;
+    }
+    
+    .calendar-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+      border-bottom: 1px solid #ddd;
+      position: -webkit-sticky; /* Safari */
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .time-column {
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      border-right: 1px solid #ddd;
+      border-left: 1px solid #ddd;
+    }
+    
+    .platform-column {
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      border-right: 1px solid #ddd;
+    }
+    
+    .calendar-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+      position: relative;
+      border-top: 1px solid #ddd;
+    }
+    
+    /* Đảm bảo tất cả các ô trong grid đều có viền */
+    .calendar-body > div {
+      border-right: 1px solid #ddd;
+    }
+    
+    .calendar-body > div:first-child {
+      border-left: 1px solid #ddd;
+    }
+    
+    .time-slots {
+      display: grid;
+      grid-template-rows: repeat(16, 100px);
+    }
+    
+    .time-slot {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    
+    .platform-column-slots {
+      display: grid;
+      grid-template-rows: repeat(16, 100px);
+    }
+    
+    .platform-slot {
+      height: 100px;
+      border-bottom: 1px solid #ddd;
+      padding: 5px;
+      position: relative;
+      width: 100%;
+    }
+    
+    .quick-add-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 36px;
+      height: 36px;
+      background-color: #1976d2;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 20px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 5;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .platform-slot:hover .quick-add-button {
+      opacity: 1;
+    }
+    
+    .post-card {
+      height: calc(100% - 10px);
+      border-left: 4px solid #1976d2;
+      padding: 8px;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+    }
+    
+    .post-card:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+    }
+    
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .post-content {
+      flex: 1;
+      overflow: hidden;
+      font-size: 12px;
+    }
+    
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 4px;
+      width: 500px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      gap: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background-color: #1976d2;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .btn-danger {
+      background-color: #d32f2f;
+      color: white;
+    }
+    
+    .add-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: #1976d2;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+    
+    .platform-coinmarketcap { border-color: #17181B; }
+    .platform-bnbsquare { border-color: #F3BA2F; }
+    .platform-twitter { border-color: #1DA1F2; }
+    .platform-telegram { border-color: #0088cc; }
+    .platform-facebook { border-color: #1877F2; }
+    .platform-threads { border-color: #000000; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1>Social Media Content Manager</h1>
+      <div>
+        <button class="btn btn-secondary" onclick="exportData()">Export</button>
+        <input type="file" id="import-file" style="display: none;" onchange="importData(event)">
+        <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Import</button>
+        <button class="btn btn-primary" onclick="recoverFromBackup()">Khôi phục</button>
+        <button class="btn btn-danger" onclick="confirmClearAllData()">Xóa tất cả</button>
+      </div>
+    </div>
+    
+    <div class="filters">
+      <div class="form-group">
+        <label for="date-filter">Date:</label>
+        <input type="date" id="date-filter" class="form-control" onchange="filterPosts()">
+      </div>
+      
+      <div class="form-group">
+        <label for="platform-filter">Platform:</label>
+        <select id="platform-filter" class="form-control" onchange="filterPosts()">
+          <option value="all">All Platforms</option>
+          <option value="coinmarketcap">CoinMarketCap</option>
+          <option value="bnbsquare">BNB Square</option>
+          <option value="twitter">X (Twitter)</option>
+          <option value="telegram">Telegram</option>
+          <option value="facebook">Facebook</option>
+          <option value="threads">Threads</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="status-filter">Status:</label>
+        <select id="status-filter" class="form-control" onchange="filterPosts()">
+          <option value="all">All Status</option>
+          <option value="posted">Posted</option>
+          <option value="not-posted">Not Posted</option>
+        </select>
+      </div>
+      
+      <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+    </div>
+    
+    <div class="calendar">
+      <div class="calendar-header">
+        <div class="time-column">Time</div>
+        <div class="platform-column" style="background-color: rgba(23, 24, 27, 0.1);">CoinMarketCap</div>
+        <div class="platform-column" style="background-color: rgba(243, 186, 47, 0.1);">BNB Square</div>
+        <div class="platform-column" style="background-color: rgba(29, 161, 242, 0.1);">X (Twitter)</div>
+        <div class="platform-column" style="background-color: rgba(0, 136, 204, 0.1);">Telegram</div>
+        <div class="platform-column" style="background-color: rgba(24, 119, 242, 0.1);">Facebook</div>
+        <div class="platform-column" style="background-color: rgba(0, 0, 0, 0.1);">Threads</div>
+      </div>
+      
+      <div class="calendar-body">
+        <div class="time-slots" id="time-slots">
+          <!-- Time slots will be generated by JavaScript -->
+        </div>
+        <div class="platform-column-slots" id="coinmarketcap-slots">
+          <!-- CoinMarketCap slots will be generated by JavaScript -->
+        </div>
+        <div class="platform-column-slots" id="bnbsquare-slots">
+          <!-- BNB Square slots will be generated by JavaScript -->
+        </div>
+        <div class="platform-column-slots" id="twitter-slots">
+          <!-- Twitter slots will be generated by JavaScript -->
+        </div>
+        <div class="platform-column-slots" id="telegram-slots">
+          <!-- Telegram slots will be generated by JavaScript -->
+        </div>
+        <div class="platform-column-slots" id="facebook-slots">
+          <!-- Facebook slots will be generated by JavaScript -->
+        </div>
+        <div class="platform-column-slots" id="threads-slots">
+          <!-- Threads slots will be generated by JavaScript -->
+        </div>
+      </div>
+    </div>
+    
+    <div class="add-button" onclick="openPostModal()">+</div>
+  </div>
+  
+  <div class="modal" id="post-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Add New Post</h2>
+        <span style="cursor: pointer;" onclick="closePostModal()">×</span>
+      </div>
+      
+      <div class="form-group">
+        <label for="post-platform">Platform:</label>
+        <select id="post-platform" class="form-control">
+          <option value="coinmarketcap">CoinMarketCap</option>
+          <option value="bnbsquare">BNB Square</option>
+          <option value="twitter">X (Twitter)</option>
+          <option value="telegram">Telegram</option>
+          <option value="facebook">Facebook</option>
+          <option value="threads">Threads</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="post-time">Time:</label>
+        <input type="time" id="post-time" class="form-control">
+      </div>
+      
+      <div class="form-group">
+        <label for="post-content">Content:</label>
+        <div style="position: relative;">
+          <textarea id="post-content" class="form-control" rows="6" placeholder="Nhập nội dung bài viết ở đây..."></textarea>
+          <button class="btn btn-sm btn-primary" style="position: absolute; top: 5px; right: 5px;" onclick="copyPostContent()">Copy</button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="post-image">Image:</label>
+        <input type="file" id="post-image" class="form-control" accept="image/*">
+        <div id="image-preview" style="margin-top: 8px; text-align: center; display: none;">
+          <img id="preview-img" style="max-width: 100%; max-height: 200px;">
+          <div style="margin-top: 8px;">
+            <button class="btn btn-primary" onclick="copyImage()" style="margin-right: 5px;">Copy Image</button>
+            <button class="btn btn-danger" onclick="removeImage()">Remove Image</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="post-status"> Mark as Posted
+        </label>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closePostModal()">Cancel</button>
+        <button class="btn btn-success" onclick="savePost()">Save (Ctrl+S)</button>
+        <button class="btn btn-primary" onclick="saveAndNew()">Save & New (Ctrl+N)</button>
+      </div>
+      
+      <div style="margin-top: 10px; font-size: 12px; color: #666;">
+        <strong>Phím tắt:</strong> Ctrl+S = Lưu | Ctrl+N = Lưu & Tạo mới | Esc = Hủy
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Constants
+    const TIME_SLOTS = [
+      '09:00', '10:00', '11:00', '12:00', 
+      '13:00', '14:00', '15:00', '16:00', 
+      '17:00', '18:00', '19:00', '20:00', 
+      '21:00', '22:00', '23:00', '24:00'
+    ];
+    
+    const PLATFORMS = {
+      coinmarketcap: { name: 'CoinMarketCap', color: '#17181B' },
+      bnbsquare: { name: 'BNB Square', color: '#F3BA2F' },
+      twitter: { name: 'X (Twitter)', color: '#1DA1F2' },
+      telegram: { name: 'Telegram', color: '#0088cc' },
+      facebook: { name: 'Facebook', color: '#1877F2' },
+      threads: { name: 'Threads', color: '#000000' }
+    };
+    
+    // State
+    let posts = [];
+    let currentPostId = null;
+    let currentImage = null;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeApp();
+      setupKeyboardShortcuts();
+      setupBeforeUnloadWarning();
+      setupAutoRestore();
+    });
+    
+    function setupBeforeUnloadWarning() {
+      window.addEventListener('beforeunload', function(e) {
+        // Hiển thị cảnh báo khi người dùng cố gắng đóng/refresh trang
+        e.preventDefault();
+        e.returnValue = 'Bạn có dữ liệu chưa được lưu. Bạn có chắc chắn muốn rời khỏi trang?';
+      });
+    }
+    
+    function setupAutoRestore() {
+      // Kiểm tra xem có bị crash không bằng cách đặt flag
+      const lastSessionCrashed = localStorage.getItem('session_crashed') === 'true';
+      
+      // Đánh dấu phiên hiện tại
+      localStorage.setItem('session_crashed', 'true');
+      
+      // Khi trang đóng bình thường, gỡ đánh dấu
+      window.addEventListener('beforeunload', function() {
+        localStorage.setItem('session_crashed', 'false');
+      });
+      
+      // Nếu phiên trước bị crash, thử khôi phục từ IndexedDB
+      if (lastSessionCrashed) {
+        console.log('Phát hiện phiên trước bị crash, đang thử khôi phục...');
+        restoreFromIndexedDB();
+      }
+    }
+    
+    function restoreFromIndexedDB() {
+      const request = indexedDB.open('SocialMediaBackup', 1);
+      
+      request.onsuccess = function(event) {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('backups')) return;
+        
+        const transaction = db.transaction(['backups'], 'readonly');
+        const store = transaction.objectStore('backups');
+        const getAllRequest = store.getAll();
+        
+        getAllRequest.onsuccess = function() {
+          const backups = getAllRequest.result;
+          if (backups.length === 0) return;
+          
+          // Sắp xếp theo thời gian, mới nhất lên đầu
+          backups.sort((a, b) => b.id - a.id);
+          
+          // Lấy bản backup mới nhất
+          const latestBackup = backups[0];
+          
+          // Đọc dữ liệu từ blob
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              const restoredPosts = JSON.parse(e.target.result);
+              if (restoredPosts && restoredPosts.length > 0) {
+                if (posts.length < restoredPosts.length) {
+                  posts = restoredPosts;
+                  savePosts();
+                  renderPosts();
+                  console.log('Khôi phục thành công từ backup:', latestBackup.timestamp);
+                  alert(`Đã khôi phục ${restoredPosts.length} bài viết từ bản sao lưu tự động.`);
+                }
+              }
+            } catch (error) {
+              console.error('Error restoring from backup:', error);
+            }
+          };
+          reader.readAsText(latestBackup.data);
+        };
+      };
+      
+      request.onerror = function(event) {
+        console.error('IndexedDB error during restore:', event.target.error);
+      };
+    }
+    
+    function recoverFromBackup() {
+      const request = indexedDB.open('SocialMediaBackup', 1);
+      
+      request.onsuccess = function(event) {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('backups')) {
+          alert('Không tìm thấy bản sao lưu nào!');
+          return;
+        }
+        
+        const transaction = db.transaction(['backups'], 'readonly');
+        const store = transaction.objectStore('backups');
+        const getAllRequest = store.getAll();
+        
+        getAllRequest.onsuccess = function() {
+          const backups = getAllRequest.result;
+          if (backups.length === 0) {
+            alert('Không tìm thấy bản sao lưu nào!');
+            return;
+          }
+          
+          // Sắp xếp theo thời gian, mới nhất lên đầu
+          backups.sort((a, b) => b.id - a.id);
+          
+          // Hiển thị danh sách backup để người dùng chọn
+          showBackupSelectionDialog(backups);
+        };
+      };
+      
+      request.onerror = function(event) {
+        console.error('IndexedDB error:', event.target.error);
+        alert('Lỗi khi truy cập bản sao lưu!');
+      };
+    }
+    
+    function showBackupSelectionDialog(backups) {
+      // Tạo modal dialog
+      const dialogOverlay = document.createElement('div');
+      dialogOverlay.style.position = 'fixed';
+      dialogOverlay.style.top = '0';
+      dialogOverlay.style.left = '0';
+      dialogOverlay.style.width = '100%';
+      dialogOverlay.style.height = '100%';
+      dialogOverlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+      dialogOverlay.style.zIndex = '2000';
+      dialogOverlay.style.display = 'flex';
+      dialogOverlay.style.justifyContent = 'center';
+      dialogOverlay.style.alignItems = 'center';
+      
+      const dialog = document.createElement('div');
+      dialog.style.backgroundColor = 'white';
+      dialog.style.padding = '20px';
+      dialog.style.borderRadius = '4px';
+      dialog.style.width = '500px';
+      dialog.style.maxWidth = '90%';
+      dialog.style.maxHeight = '90%';
+      dialog.style.overflowY = 'auto';
+      
+      // Tiêu đề
+      const title = document.createElement('h2');
+      title.textContent = 'Chọn bản sao lưu để khôi phục';
+      dialog.appendChild(title);
+      
+      // Danh sách backup
+      const list = document.createElement('div');
+      list.style.marginTop = '20px';
+      list.style.marginBottom = '20px';
+      
+      backups.forEach((backup, index) => {
+        const backupItem = document.createElement('div');
+        backupItem.style.padding = '10px';
+        backupItem.style.border = '1px solid #ddd';
+        backupItem.style.marginBottom = '10px';
+        backupItem.style.borderRadius = '4px';
+        backupItem.style.cursor = 'pointer';
+        backupItem.style.display = 'flex';
+        backupItem.style.justifyContent = 'space-between';
+        backupItem.style.alignItems = 'center';
+        
+        const date = new Date(backup.timestamp);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        
+        backupItem.innerHTML = `
+          <div>
+            <strong>Backup #${index + 1}</strong><br>
+            Thời gian: ${formattedDate}<br>
+            Số bài viết: ${backup.count}
+          </div>
+          <button class="btn btn-primary">Khôi phục</button>
+        `;
+        
+        backupItem.querySelector('button').addEventListener('click', function() {
+          restoreFromBackup(backup);
+          document.body.removeChild(dialogOverlay);
+        });
+        
+        list.appendChild(backupItem);
+      });
+      
+      dialog.appendChild(list);
+      
+      // Nút đóng
+      const closeButton = document.createElement('button');
+      closeButton.textContent = 'Đóng';
+      closeButton.className = 'btn btn-secondary';
+      closeButton.style.marginRight = '10px';
+      closeButton.addEventListener('click', function() {
+        document.body.removeChild(dialogOverlay);
+      });
+      
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.display = 'flex';
+      buttonContainer.style.justifyContent = 'flex-end';
+      buttonContainer.appendChild(closeButton);
+      
+      dialog.appendChild(buttonContainer);
+      
+      dialogOverlay.appendChild(dialog);
+      document.body.appendChild(dialogOverlay);
+    }
+    
+    function restoreFromBackup(backup) {
+      // Đọc dữ liệu từ blob
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const restoredPosts = JSON.parse(e.target.result);
+          if (restoredPosts && restoredPosts.length > 0) {
+            // Xác nhận từ người dùng trước khi ghi đè
+            if (confirm(`Bạn có chắc chắn muốn khôi phục ${restoredPosts.length} bài viết từ bản sao lưu này? Dữ liệu hiện tại sẽ bị ghi đè.`)) {
+              posts = restoredPosts;
+              savePosts();
+              renderPosts();
+              alert(`Đã khôi phục thành công ${restoredPosts.length} bài viết.`);
+            }
+          } else {
+            alert('Bản sao lưu không chứa dữ liệu hợp lệ!');
+          }
+        } catch (error) {
+          console.error('Error restoring from backup:', error);
+          alert('Lỗi khi khôi phục dữ liệu: ' + error.message);
+        }
+      };
+      reader.readAsText(backup.data);
+    }
+    
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', function(e) {
+        // Check if modal is open
+        const modal = document.getElementById('post-modal');
+        if (modal.style.display === 'block') {
+          // Ctrl+S: Save
+          if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            savePost();
+          }
+          // Ctrl+N: Save and New
+          else if (e.ctrlKey && e.key === 'n') {
+            e.preventDefault();
+            saveAndNew();
+          }
+          // Escape: Close modal
+          else if (e.key === 'Escape') {
+            closePostModal();
+          }
+        }
+      });
+    }
+    
+    function initializeApp() {
+      // Set default date to today
+      const today = new Date();
+      document.getElementById('date-filter').valueAsDate = today;
+      
+      // Load posts from localStorage
+      loadPosts();
+      
+      // Generate time slots
+      generateTimeSlots();
+      
+      // Generate platform slots
+      generatePlatformSlots();
+      
+      // Render posts
+      renderPosts();
+      
+      // Cố định tiêu đề khi cuộn
+      setupStickyHeader();
+    }
+    
+    function setupStickyHeader() {
+      // Sử dụng cách tiếp cận khác để cố định header
+      window.addEventListener('scroll', function() {
+        const calendarHeader = document.querySelector('.calendar-header');
+        const calendar = document.querySelector('.calendar');
+        const calendarRect = calendar.getBoundingClientRect();
+        const headerHeight = calendarHeader.offsetHeight;
+        
+        // Kiểm tra nếu phần đầu của calendar đã đi qua phần trên của viewport
+        if (calendarRect.top < 0) {
+          // Cố định header ở đầu trang
+          calendarHeader.style.position = 'fixed';
+          calendarHeader.style.top = '0';
+          calendarHeader.style.width = `${calendar.offsetWidth}px`;
+          calendarHeader.style.zIndex = '100';
+          
+          // Thêm padding-top cho calendar-body để bù đắp cho header đã bị tách ra
+          document.querySelector('.calendar-body').style.paddingTop = `${headerHeight}px`;
+        } else {
+          // Trả về vị trí bình thường
+          calendarHeader.style.position = 'relative';
+          calendarHeader.style.top = 'auto';
+          calendarHeader.style.width = 'auto';
+          document.querySelector('.calendar-body').style.paddingTop = '0';
+        }
+      });
+    }
+    
+    function generateTimeSlots() {
+      const timeSlotsContainer = document.getElementById('time-slots');
+      timeSlotsContainer.innerHTML = '';
+      
+      TIME_SLOTS.forEach(timeSlot => {
+        const timeSlotElement = document.createElement('div');
+        timeSlotElement.className = 'time-slot';
+        timeSlotElement.textContent = timeSlot;
+        timeSlotsContainer.appendChild(timeSlotElement);
+      });
+    }
+    
+    function generatePlatformSlots() {
+      Object.keys(PLATFORMS).forEach(platform => {
+        const platformSlotsContainer = document.getElementById(`${platform}-slots`);
+        platformSlotsContainer.innerHTML = '';
+        
+        TIME_SLOTS.forEach(timeSlot => {
+          const platformSlotElement = document.createElement('div');
+          platformSlotElement.className = 'platform-slot';
+          platformSlotElement.id = `${platform}-${timeSlot}`;
+          
+          // Tạo nút thêm nhanh (+) cho mỗi ô
+          const quickAddButton = document.createElement('div');
+          quickAddButton.className = 'quick-add-button';
+          quickAddButton.innerHTML = '+';
+          quickAddButton.title = `Thêm bài mới vào ${PLATFORMS[platform].name} lúc ${timeSlot}`;
+          
+          // Gắn sự kiện click cho nút thêm nhanh
+          quickAddButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Ngăn chặn sự kiện lan truyền
+            openQuickAddModal(platform, timeSlot);
+          });
+          
+          platformSlotElement.appendChild(quickAddButton);
+          platformSlotsContainer.appendChild(platformSlotElement);
+        });
+      });
+    }
+    
+    function renderPosts() {
+      // Clear all slots but preserve the quick add buttons
+      document.querySelectorAll('.platform-slot').forEach(slot => {
+        // Save the quick add button if it exists
+        const quickAddButton = slot.querySelector('.quick-add-button');
+        // Clear the slot
+        slot.innerHTML = '';
+        // If there was a quick add button, add it back
+        if (quickAddButton) {
+          slot.appendChild(quickAddButton);
+        } else {
+          // If no quick add button exists, create a new one
+          const platform = slot.id.split('-')[0];
+          const timeSlot = slot.id.split('-')[1];
+          
+          const newQuickAddButton = document.createElement('div');
+          newQuickAddButton.className = 'quick-add-button';
+          newQuickAddButton.innerHTML = '+';
+          newQuickAddButton.title = `Thêm bài mới vào ${PLATFORMS[platform]?.name || platform} lúc ${timeSlot}`;
+          
+          // Gắn sự kiện click cho nút thêm nhanh
+          newQuickAddButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Ngăn chặn sự kiện lan truyền
+            openQuickAddModal(platform, timeSlot);
+          });
+          
+          slot.appendChild(newQuickAddButton);
+        }
+      });
+      
+      // Filter posts
+      const filteredPosts = filterPostsData();
+      
+      // Render filtered posts
+      filteredPosts.forEach(post => {
+        const time = new Date(post.scheduledTime);
+        const hours = time.getHours().toString().padStart(2, '0');
+        const timeSlot = `${hours}:00`;
+        
+        const slotElement = document.getElementById(`${post.platform}-${timeSlot}`);
+        if (slotElement) {
+          const postElement = document.createElement('div');
+          postElement.className = `post-card platform-${post.platform}`;
+          postElement.style.opacity = post.isPosted ? '0.7' : '1';
+          postElement.innerHTML = `
+            <div class="post-header">
+              <span>${timeSlot}</span>
+              <span onclick="togglePostStatus('${post.id}', event)" style="cursor: pointer;">
+                ${post.isPosted ? '✅' : '⭕'}
+              </span>
+            </div>
+            <div class="post-content">${post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content}</div>
+            ${post.image ? `<img src="${post.image}" style="width: 100%; height: 40px; object-fit: cover; margin-top: 8px; border-radius: 4px;">` : ''}
+            <div class="post-footer">
+              <span style="font-size: 12px; color: ${post.isPosted ? 'green' : 'gray'};">${post.isPosted ? 'Posted' : 'Not Posted'}</span>
+            </div>
+          `;
+          
+          postElement.addEventListener('click', function(event) {
+            if (!event.target.closest('[onclick]')) {
+              editPost(post.id);
+            }
+          });
+          
+          slotElement.appendChild(postElement);
+        }
+      });
+    }
+    
+    function filterPostsData() {
+      const dateFilter = document.getElementById('date-filter').value;
+      const platformFilter = document.getElementById('platform-filter').value;
+      const statusFilter = document.getElementById('status-filter').value;
+      
+      return posts.filter(post => {
+        const postDate = new Date(post.scheduledTime).toISOString().split('T')[0];
+        
+        const dateMatch = postDate === dateFilter;
+        const platformMatch = platformFilter === 'all' || post.platform === platformFilter;
+        const statusMatch = statusFilter === 'all' || 
+                          (statusFilter === 'posted' && post.isPosted) || 
+                          (statusFilter === 'not-posted' && !post.isPosted);
+        
+        return dateMatch && platformMatch && statusMatch;
+      });
+    }
+    
+    function filterPosts() {
+      renderPosts();
+    }
+    
+    function resetFilters() {
+      document.getElementById('date-filter').valueAsDate = new Date();
+      document.getElementById('platform-filter').value = 'all';
+      document.getElementById('status-filter').value = 'all';
+      filterPosts();
+    }
+    
+    function openPostModal(postId = null, platform = null, timeSlot = null) {
+      const modal = document.getElementById('post-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const platformSelect = document.getElementById('post-platform');
+      const timeInput = document.getElementById('post-time');
+      const contentTextarea = document.getElementById('post-content');
+      const statusCheckbox = document.getElementById('post-status');
+      const imagePreview = document.getElementById('image-preview');
+      const previewImg = document.getElementById('preview-img');
+      
+      // Reset form
+      currentPostId = null;
+      currentImage = null;
+      platformSelect.value = platform || 'facebook';
+      timeInput.value = '';
+      contentTextarea.value = '';
+      statusCheckbox.checked = false;
+      imagePreview.style.display = 'none';
+      
+      // Set time based on parameters or current hour
+      if (timeSlot) {
+        timeInput.value = timeSlot;
+      } else {
+        const now = new Date();
+        timeInput.value = `${now.getHours().toString().padStart(2, '0')}:00`;
+      }
+      
+      if (postId) {
+        // Edit existing post
+        const post = posts.find(p => p.id === postId);
+        if (post) {
+          currentPostId = postId;
+          modalTitle.textContent = 'Edit Post';
+          
+          platformSelect.value = post.platform;
+          
+          const postTime = new Date(post.scheduledTime);
+          timeInput.value = `${postTime.getHours().toString().padStart(2, '0')}:${postTime.getMinutes().toString().padStart(2, '0')}`;
+          
+          contentTextarea.value = post.content;
+          statusCheckbox.checked = post.isPosted;
+          
+          if (post.image) {
+            currentImage = post.image;
+            previewImg.src = post.image;
+            imagePreview.style.display = 'block';
+          }
+        }
+      } else {
+        modalTitle.textContent = 'Add New Post';
+      }
+      
+      modal.style.display = 'block';
+      
+      // Focus vào textarea nội dung sau khi mở modal
+      setTimeout(() => {
+        contentTextarea.focus();
+      }, 100);
+    }
+    
+    function openQuickAddModal(platform, timeSlot) {
+      // Mở modal với nền tảng và thời gian đã chọn
+      openPostModal(null, platform, timeSlot);
+    }
+    
+    function closePostModal() {
+      const modal = document.getElementById('post-modal');
+      modal.style.display = 'none';
+    }
+    
+    function savePost() {
+      const platformSelect = document.getElementById('post-platform');
+      const timeInput = document.getElementById('post-time');
+      const contentTextarea = document.getElementById('post-content');
+      const statusCheckbox = document.getElementById('post-status');
+      
+      // Validate
+      if (!contentTextarea.value.trim()) {
+        alert('Please enter content for the post');
+        return;
+      }
+      
+      if (!timeInput.value) {
+        alert('Please select a time for the post');
+        return;
+      }
+      
+      // Create post object
+      const dateStr = document.getElementById('date-filter').value;
+      const [hours, minutes] = timeInput.value.split(':');
+      
+      const scheduledTime = new Date(dateStr);
+      scheduledTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      const post = {
+        id: currentPostId || Date.now().toString(),
+        platform: platformSelect.value,
+        content: contentTextarea.value,
+        scheduledTime: scheduledTime.toISOString(),
+        isPosted: statusCheckbox.checked,
+        image: currentImage
+      };
+      
+      // Save post
+      if (currentPostId) {
+        // Update existing post
+        const index = posts.findIndex(p => p.id === currentPostId);
+        if (index !== -1) {
+          posts[index] = post;
+        }
+      } else {
+        // Add new post
+        posts.push(post);
+      }
+      
+      // Save to localStorage
+      savePosts();
+      
+      // Close modal
+      closePostModal();
+      
+      // Render posts
+      renderPosts();
+    }
+    
+    function saveAndNew() {
+      const platformSelect = document.getElementById('post-platform');
+      const timeInput = document.getElementById('post-time');
+      const contentTextarea = document.getElementById('post-content');
+      const statusCheckbox = document.getElementById('post-status');
+      
+      // Validate
+      if (!contentTextarea.value.trim()) {
+        alert('Please enter content for the post');
+        return;
+      }
+      
+      if (!timeInput.value) {
+        alert('Please select a time for the post');
+        return;
+      }
+      
+      // Create post object
+      const dateStr = document.getElementById('date-filter').value;
+      const [hours, minutes] = timeInput.value.split(':');
+      
+      const scheduledTime = new Date(dateStr);
+      scheduledTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      const post = {
+        id: currentPostId || Date.now().toString(),
+        platform: platformSelect.value,
+        content: contentTextarea.value,
+        scheduledTime: scheduledTime.toISOString(),
+        isPosted: statusCheckbox.checked,
+        image: currentImage
+      };
+      
+      // Save post
+      if (currentPostId) {
+        // Update existing post
+        const index = posts.findIndex(p => p.id === currentPostId);
+        if (index !== -1) {
+          posts[index] = post;
+        }
+      } else {
+        // Add new post
+        posts.push(post);
+      }
+      
+      // Save to localStorage
+      savePosts();
+      
+      // Render posts
+      renderPosts();
+      
+      // Open new post modal with same platform and incremented time
+      const platform = platformSelect.value;
+      let newTime = timeInput.value;
+      
+      // Increment time by 1 hour
+      let [h, m] = newTime.split(':');
+      h = parseInt(h);
+      h = (h + 1) % 24;
+      newTime = `${h.toString().padStart(2, '0')}:${m}`;
+      
+      // Reset form for new post
+      currentPostId = null;
+      currentImage = null;
+      document.getElementById('modal-title').textContent = 'Add New Post';
+      platformSelect.value = platform;
+      timeInput.value = newTime;
+      contentTextarea.value = '';
+      statusCheckbox.checked = false;
+      document.getElementById('image-preview').style.display = 'none';
+      
+      // Focus on content textarea
+      setTimeout(() => {
+        contentTextarea.focus();
+      }, 100);
+    }
+    
+    function editPost(postId) {
+      openPostModal(postId);
+    }
+    
+    function togglePostStatus(postId, event) {
+      event.stopPropagation();
+      
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        post.isPosted = !post.isPosted;
+        savePosts();
+        renderPosts();
+      }
+    }
+    
+    function removeImage() {
+      currentImage = null;
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('post-image').value = '';
+    }
+    
+    function copyImage() {
+      const img = document.getElementById('preview-img');
+      const copyBtn = event.target;
+      const originalText = copyBtn.textContent;
+      
+      // Tạo canvas để vẽ hình ảnh
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      
+      // Chuyển canvas thành blob
+      canvas.toBlob(function(blob) {
+        try {
+          // Tạo ClipboardItem
+          const item = new ClipboardItem({ 'image/png': blob });
+          
+          // Sao chép vào clipboard
+          navigator.clipboard.write([item])
+            .then(() => {
+              copyBtn.textContent = 'Copied!';
+              copyBtn.style.backgroundColor = '#4caf50';
+              
+              setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '';
+              }, 2000);
+            })
+            .catch(err => {
+              console.error('Could not copy image: ', err);
+              alert('Không thể sao chép hình ảnh. Hãy thử cách khác: nhấn chuột phải vào ảnh và chọn "Copy image"');
+              copyBtn.textContent = 'Failed!';
+              copyBtn.style.backgroundColor = '#f44336';
+              
+              setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '';
+              }, 2000);
+            });
+        } catch (err) {
+          // Fallback cho trình duyệt không hỗ trợ Clipboard API với hình ảnh
+          console.error('Clipboard API not supported for images: ', err);
+          alert('Trình duyệt của bạn không hỗ trợ sao chép hình ảnh tự động. Hãy nhấn chuột phải vào ảnh và chọn "Copy image"');
+          copyBtn.textContent = 'Not supported';
+          copyBtn.style.backgroundColor = '#ff9800';
+          
+          setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.backgroundColor = '';
+          }, 2000);
+        }
+      });
+    }
+    
+    function copyPostContent() {
+      const content = document.getElementById('post-content').value;
+      const copyBtn = event.target;
+      const originalText = copyBtn.textContent;
+      
+      navigator.clipboard.writeText(content)
+        .then(() => {
+          copyBtn.textContent = 'Copied!';
+          copyBtn.style.backgroundColor = '#4caf50';
+          
+          setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.backgroundColor = '';
+          }, 2000);
+        })
+        .catch(err => {
+          console.error('Could not copy text: ', err);
+          copyBtn.textContent = 'Failed!';
+          copyBtn.style.backgroundColor = '#f44336';
+          
+          setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.backgroundColor = '';
+          }, 2000);
+        });
+    }
+    
+    // File handling
+    document.getElementById('post-image').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentImage = e.target.result;
+          document.getElementById('preview-img').src = e.target.result;
+          document.getElementById('image-preview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Storage functions
+    function loadPosts() {
+      try {
+        const savedPosts = localStorage.getItem('social_media_posts');
+        posts = savedPosts ? JSON.parse(savedPosts) : [];
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        posts = [];
+        
+        // Kiểm tra backup trong localStorage
+        tryLoadFromBackup();
+      }
+    }
+    
+    function tryLoadFromBackup() {
+      try {
+        const backupPosts = localStorage.getItem('social_media_posts_backup');
+        if (backupPosts) {
+          posts = JSON.parse(backupPosts);
+          console.log('Loaded data from backup');
+          savePosts(); // Lưu lại vào storage chính
+        }
+      } catch (error) {
+        console.error('Error loading backup:', error);
+      }
+    }
+    
+    function savePosts() {
+      try {
+        // Lưu vào storage chính
+        localStorage.setItem('social_media_posts', JSON.stringify(posts));
+        
+        // Lưu bản backup
+        localStorage.setItem('social_media_posts_backup', JSON.stringify(posts));
+        
+        // Lưu vào file tự động
+        autoSaveToFile();
+      } catch (error) {
+        console.error('Error saving posts:', error);
+        alert('Lỗi khi lưu dữ liệu! Vui lòng xuất dữ liệu ra file để đảm bảo an toàn.');
+      }
+    }
+    
+    // Biến để theo dõi thời gian auto-save gần nhất
+    let lastAutoSave = 0;
+    
+    function autoSaveToFile() {
+      const now = Date.now();
+      // Chỉ auto-save tối đa 1 lần mỗi 5 phút để tránh quá tải
+      if (now - lastAutoSave < 5 * 60 * 1000) return;
+      
+      try {
+        const dataStr = JSON.stringify(posts);
+        const blob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        
+        // Lưu vào IndexedDB để có thể truy xuất sau này
+        saveToIndexedDB(blob);
+        
+        lastAutoSave = now;
+        console.log('Auto-saved at', new Date().toLocaleTimeString());
+      } catch (error) {
+        console.error('Error auto-saving:', error);
+      }
+    }
+    
+    // Sử dụng IndexedDB để lưu trữ bản sao dữ liệu
+    function saveToIndexedDB(blob) {
+      const request = indexedDB.open('SocialMediaBackup', 1);
+      
+      request.onupgradeneeded = function(event) {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('backups')) {
+          db.createObjectStore('backups', { keyPath: 'id' });
+        }
+      };
+      
+      request.onsuccess = function(event) {
+        const db = event.target.result;
+        const transaction = db.transaction(['backups'], 'readwrite');
+        const store = transaction.objectStore('backups');
+        
+        // Lưu với id là timestamp hiện tại
+        const backup = {
+          id: Date.now(),
+          data: blob,
+          timestamp: new Date().toISOString(),
+          count: posts.length
+        };
+        
+        store.add(backup);
+        
+        // Xóa các bản backup cũ, chỉ giữ 5 bản gần nhất
+        cleanupOldBackups(store);
+      };
+      
+      request.onerror = function(event) {
+        console.error('IndexedDB error:', event.target.error);
+      };
+    }
+    
+    function cleanupOldBackups(store) {
+      const getAllRequest = store.getAll();
+      
+      getAllRequest.onsuccess = function() {
+        const backups = getAllRequest.result;
+        if (backups.length > 5) {
+          // Sắp xếp theo thời gian, mới nhất lên đầu
+          backups.sort((a, b) => b.id - a.id);
+          
+          // Xóa các bản cũ
+          for (let i = 5; i < backups.length; i++) {
+            store.delete(backups[i].id);
+          }
+        }
+      };
+    }
+    
+    function exportData() {
+      const dataStr = JSON.stringify(posts);
+      const blob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      
+      const exportFileDefaultName = `social-media-posts-${new Date().toISOString().split('T')[0]}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', url);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      // Giải phóng URL object sau khi tải xuống
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    }
+    
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedPosts = JSON.parse(e.target.result);
+          posts = importedPosts;
+          savePosts();
+          renderPosts();
+          alert('Data imported successfully!');
+        } catch (error) {
+          alert('Error importing data. Please check the file format.');
+          console.error('Import error:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  // Modal xác nhận xóa tất cả dữ liệu
+  function confirmClearAllData() {
+    // Tạo modal xác nhận
+    const confirmModal = document.createElement('div');
+    confirmModal.className = 'modal';
+    confirmModal.id = 'confirm-clear-modal';
+    confirmModal.style.display = 'block';
+    
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    modalContent.style.maxWidth = '400px';
+    
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Xác nhận xóa';
+    
+    const closeBtn = document.createElement('span');
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.textContent = '×';
+    closeBtn.onclick = function() {
+      document.body.removeChild(confirmModal);
+    };
+    
+    modalHeader.appendChild(title);
+    modalHeader.appendChild(closeBtn);
+    
+    const modalBody = document.createElement('div');
+    modalBody.style.padding = '16px';
+    modalBody.innerHTML = `
+      <p style="margin-bottom: 16px;">Bạn có chắc chắn muốn xóa <strong>tất cả</strong> dữ liệu không?</p>
+      <p style="margin-bottom: 16px; color: #d32f2f;">Hành động này không thể hoàn tác!</p>
+    `;
+    
+    const modalFooter = document.createElement('div');
+    modalFooter.className = 'modal-footer';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'btn btn-secondary';
+    cancelBtn.textContent = 'Hủy';
+    cancelBtn.onclick = function() {
+      document.body.removeChild(confirmModal);
+    };
+    
+    const confirmBtn = document.createElement('button');
+    confirmBtn.className = 'btn btn-danger';
+    confirmBtn.textContent = 'Xóa tất cả';
+    confirmBtn.onclick = function() {
+      clearAllData();
+      document.body.removeChild(confirmModal);
+    };
+    
+    modalFooter.appendChild(cancelBtn);
+    modalFooter.appendChild(confirmBtn);
+    
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalContent.appendChild(modalFooter);
+    
+    confirmModal.appendChild(modalContent);
+    document.body.appendChild(confirmModal);
+  }
+  
+  // Hàm xóa tất cả dữ liệu
+  function clearAllData() {
+    // Xóa tất cả posts
+    posts = [];
+    
+    // Lưu trạng thái mới (trống)
+    savePosts();
+    
+    // Render lại UI
+    renderPosts();
+    
+    // Thông báo thành công
+    alert('Đã xóa tất cả dữ liệu thành công!');
+  }
+  </script>
+</body>
+</html>
