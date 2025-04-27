@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Social Media Content Draftboard</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -13,37 +15,62 @@
       font-family: 'Roboto', sans-serif;
       background-color: #f5f5f5;
       overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .app-container {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       background-color: white;
+      width: 100%;
+      box-sizing: border-box;
     }
     
     .header {
       background-color: #1976d2;
       color: white;
-      padding: 16px;
+      padding: 12px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+    
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    
+    .header-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
     }
     
     .filters {
       display: flex;
-      gap: 16px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 15px;
       flex-wrap: wrap;
       background-color: white;
-      padding: 16px;
+      padding: 12px;
       border-radius: 4px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.12);
       position: relative;
       z-index: 5;
+      justify-content: center;
+    }
+    
+    .form-group {
+      margin-bottom: 12px;
+      min-width: 120px;
+      flex: 1;
     }
     
     .calendar {
@@ -67,21 +94,27 @@
       background-color: white;
       z-index: 10;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      font-size: 0.85rem;
     }
     
     .time-column {
       text-align: center;
-      padding: 10px;
+      padding: 8px 4px;
       font-weight: bold;
       border-right: 1px solid #ddd;
       border-left: 1px solid #ddd;
+      font-size: 0.8rem;
     }
     
     .platform-column {
       text-align: center;
-      padding: 10px;
+      padding: 8px 2px;
       font-weight: bold;
       border-right: 1px solid #ddd;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .calendar-body {
@@ -102,27 +135,28 @@
     
     .time-slots {
       display: grid;
-      grid-template-rows: repeat(16, 100px);
+      grid-template-rows: repeat(16, 80px);
     }
     
     .time-slot {
-      height: 100px;
+      height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-bottom: 1px solid #ddd;
       font-weight: bold;
+      font-size: 0.8rem;
     }
     
     .platform-column-slots {
       display: grid;
-      grid-template-rows: repeat(16, 100px);
+      grid-template-rows: repeat(16, 80px);
     }
     
     .platform-slot {
-      height: 100px;
+      height: 80px;
       border-bottom: 1px solid #ddd;
-      padding: 5px;
+      padding: 3px;
       position: relative;
       width: 100%;
     }
@@ -154,9 +188,9 @@
     }
     
     .post-card {
-      height: calc(100% - 10px);
+      height: calc(100% - 6px);
       border-left: 4px solid #1976d2;
-      padding: 8px;
+      padding: 4px;
       background-color: white;
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.15);
@@ -165,10 +199,11 @@
       cursor: pointer;
       transition: all 0.2s ease;
       position: absolute;
-      top: 5px;
-      left: 5px;
-      right: 5px;
-      bottom: 5px;
+      top: 3px;
+      left: 3px;
+      right: 3px;
+      bottom: 3px;
+      font-size: 0.75rem;
     }
     
     .post-card:hover {
@@ -185,7 +220,35 @@
     .post-content {
       flex: 1;
       overflow: hidden;
-      font-size: 12px;
+      font-size: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+      .calendar-header {
+        font-size: 0.7rem;
+      }
+      
+      .platform-column {
+        padding: 4px 2px;
+      }
+      
+      .time-column {
+        padding: 4px 2px;
+      }
+      
+      .btn {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+      }
+      
+      .modal-header h2 {
+        font-size: 1.2rem;
+      }
     }
     
     .post-footer {
@@ -211,12 +274,13 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background-color: white;
-      padding: 20px;
+      padding: 15px;
       border-radius: 4px;
       width: 500px;
-      max-width: 90%;
+      max-width: 95%;
       max-height: 90%;
       overflow-y: auto;
+      box-sizing: border-box;
     }
     
     .modal-header {
@@ -245,10 +309,12 @@
     }
     
     .btn {
-      padding: 8px 16px;
+      padding: 6px 12px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 0.85rem;
+      white-space: nowrap;
     }
     
     .btn-primary {
@@ -280,6 +346,8 @@
       justify-content: center;
       box-shadow: 0 3px 5px rgba(0,0,0,0.3);
       cursor: pointer;
+      z-index: 100;
+      font-size: 24px;
     }
     
     .platform-coinmarketcap { border-color: #17181B; }
@@ -294,13 +362,14 @@
   <div class="app-container">
     <div class="header">
       <h1>Social Media Content Draftboard</h1>
-      <div>
+      <div class="header-buttons">
         <button class="btn btn-secondary" onclick="exportData()">Export</button>
         <input type="file" id="import-file" style="display: none;" onchange="importData(event)">
         <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Import</button>
         <button class="btn btn-info" onclick="showHelpGuide()"><i class="material-icons" style="font-size: 16px; vertical-align: text-bottom;">help_outline</i> Guide</button>
         <button class="btn btn-primary" onclick="recoverFromBackup()">Khôi phục</button>
         <button class="btn btn-danger" onclick="confirmClearAllData()">Xóa tất cả</button>
+        <button class="btn btn-success" onclick="showLinkStorage()"><i class="material-icons" style="font-size: 16px; vertical-align: text-bottom;">link</i> Links</button>
       </div>
     </div>
     
@@ -372,6 +441,63 @@
     </div>
     
     <div class="add-button" onclick="openPostModal()">+</div>
+  </div>
+  
+  <!-- Link Storage Modal -->
+  <div class="modal" id="link-storage-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Link Storage</h2>
+        <span style="cursor: pointer;" onclick="closeLinkStorage()">×</span>
+      </div>
+      
+      <div class="form-group">
+        <label for="link-url">URL:</label>
+        <input type="url" id="link-url" class="form-control" placeholder="https://example.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="link-description">Description:</label>
+        <textarea id="link-description" class="form-control" rows="2" placeholder="Mô tả ngắn về nội dung link"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="link-category">Category:</label>
+        <select id="link-category" class="form-control">
+          <option value="general">General</option>
+          <option value="news">News</option>
+          <option value="research">Research</option>
+          <option value="crypto">Crypto</option>
+          <option value="finance">Finance</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeLinkStorage()">Close</button>
+        <button class="btn btn-primary" onclick="saveLink()">Save Link</button>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h3 style="margin: 0;">Saved Links</h3>
+          <div>
+            <select id="filter-link-category" class="form-control" style="display: inline-block; width: auto;" onchange="filterLinks()">
+              <option value="all">All Categories</option>
+              <option value="general">General</option>
+              <option value="news">News</option>
+              <option value="research">Research</option>
+              <option value="crypto">Crypto</option>
+              <option value="finance">Finance</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div id="links-container" style="max-height: 300px; overflow-y: auto;">
+          <!-- Links will be displayed here -->
+        </div>
+      </div>
+    </div>
   </div>
   
   <div class="modal" id="post-modal">
@@ -456,8 +582,10 @@
     
     // State
     let posts = [];
+    let links = [];
     let currentPostId = null;
     let currentImage = null;
+    let currentLinkId = null;
     
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
@@ -465,6 +593,7 @@
       setupKeyboardShortcuts();
       setupBeforeUnloadWarning();
       setupAutoRestore();
+      loadLinks();
     });
     
     function setupBeforeUnloadWarning() {
@@ -1231,6 +1360,187 @@
       }
     }
     
+    // Link Storage Functions
+    function loadLinks() {
+      try {
+        const savedLinks = localStorage.getItem('social_media_links');
+        links = savedLinks ? JSON.parse(savedLinks) : [];
+      } catch (error) {
+        console.error('Error loading links:', error);
+        links = [];
+      }
+    }
+    
+    function saveLinks() {
+      try {
+        localStorage.setItem('social_media_links', JSON.stringify(links));
+      } catch (error) {
+        console.error('Error saving links:', error);
+        alert('Lỗi khi lưu liên kết!');
+      }
+    }
+    
+    function showLinkStorage() {
+      // Reset form
+      currentLinkId = null;
+      document.getElementById('link-url').value = '';
+      document.getElementById('link-description').value = '';
+      document.getElementById('link-category').value = 'general';
+      document.getElementById('filter-link-category').value = 'all';
+      
+      // Render links
+      renderLinks();
+      
+      // Show modal
+      document.getElementById('link-storage-modal').style.display = 'block';
+    }
+    
+    function closeLinkStorage() {
+      document.getElementById('link-storage-modal').style.display = 'none';
+    }
+    
+    function saveLink() {
+      const url = document.getElementById('link-url').value.trim();
+      const description = document.getElementById('link-description').value.trim();
+      const category = document.getElementById('link-category').value;
+      
+      // Validate
+      if (!url) {
+        alert('Please enter a URL');
+        return;
+      }
+      
+      // Create link object
+      const link = {
+        id: currentLinkId || Date.now().toString(),
+        url: url,
+        description: description,
+        category: category,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Save link
+      if (currentLinkId) {
+        // Update existing link
+        const index = links.findIndex(l => l.id === currentLinkId);
+        if (index !== -1) {
+          links[index] = link;
+        }
+      } else {
+        // Add new link
+        links.push(link);
+      }
+      
+      // Save to localStorage
+      saveLinks();
+      
+      // Reset form
+      document.getElementById('link-url').value = '';
+      document.getElementById('link-description').value = '';
+      document.getElementById('link-category').value = 'general';
+      currentLinkId = null;
+      
+      // Re-render links
+      renderLinks();
+    }
+    
+    function renderLinks() {
+      const linksContainer = document.getElementById('links-container');
+      linksContainer.innerHTML = '';
+      
+      // Filter links
+      const categoryFilter = document.getElementById('filter-link-category').value;
+      const filteredLinks = links.filter(link => categoryFilter === 'all' || link.category === categoryFilter);
+      
+      if (filteredLinks.length === 0) {
+        linksContainer.innerHTML = '<p style="text-align: center; color: #888;">No links found</p>';
+        return;
+      }
+      
+      // Sort links by creation date (newest first)
+      filteredLinks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      // Render links
+      filteredLinks.forEach(link => {
+        const linkElement = document.createElement('div');
+        linkElement.className = 'link-item';
+        linkElement.style.padding = '10px';
+        linkElement.style.marginBottom = '10px';
+        linkElement.style.borderRadius = '4px';
+        linkElement.style.backgroundColor = '#f9f9f9';
+        linkElement.style.border = '1px solid #eee';
+        linkElement.style.position = 'relative';
+        
+        // Format date
+        const createdDate = new Date(link.createdAt);
+        const formattedDate = `${createdDate.toLocaleDateString()} ${createdDate.toLocaleTimeString()}`;
+        
+        // Category badge
+        const categoryColors = {
+          general: '#607d8b',
+          news: '#2196f3',
+          research: '#9c27b0',
+          crypto: '#ff9800',
+          finance: '#4caf50',
+          other: '#795548'
+        };
+        
+        linkElement.innerHTML = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <div>
+              <a href="${link.url}" target="_blank" style="color: #1976d2; font-weight: bold; text-decoration: none; word-break: break-all;">${link.url}</a>
+            </div>
+            <div>
+              <span style="background-color: ${categoryColors[link.category] || '#607d8b'}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem;">${link.category}</span>
+            </div>
+          </div>
+          <div style="margin-bottom: 5px;">${link.description || '<em style="color: #888;">No description</em>'}</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #888;">
+            <span>${formattedDate}</span>
+            <div>
+              <button class="btn btn-sm btn-primary" style="padding: 2px 5px; margin-right: 5px; font-size: 0.7rem;" onclick="editLink('${link.id}')">Edit</button>
+              <button class="btn btn-sm btn-danger" style="padding: 2px 5px; font-size: 0.7rem;" onclick="deleteLink('${link.id}')">Delete</button>
+            </div>
+          </div>
+        `;
+        
+        linksContainer.appendChild(linkElement);
+      });
+    }
+    
+    function editLink(linkId) {
+      const link = links.find(l => l.id === linkId);
+      if (link) {
+        currentLinkId = linkId;
+        document.getElementById('link-url').value = link.url;
+        document.getElementById('link-description').value = link.description || '';
+        document.getElementById('link-category').value = link.category;
+        
+        // Scroll to top of modal
+        document.querySelector('#link-storage-modal .modal-content').scrollTop = 0;
+        
+        // Focus on description
+        setTimeout(() => {
+          document.getElementById('link-description').focus();
+        }, 100);
+      }
+    }
+    
+    function deleteLink(linkId) {
+      if (confirm('Are you sure you want to delete this link?')) {
+        const index = links.findIndex(l => l.id === linkId);
+        if (index !== -1) {
+          links.splice(index, 1);
+          saveLinks();
+          renderLinks();
+        }
+      }
+    }
+    
+    function filterLinks() {
+      renderLinks();
+    }
+    
     function tryLoadFromBackup() {
       try {
         const backupPosts = localStorage.getItem('social_media_posts_backup');
@@ -1451,7 +1761,7 @@
   </script>
   <!-- Simple Donation Link -->
   <div style="text-align: center; margin: 30px auto 15px; font-size: 14px; color: #888;">
-    Thấy công cụ hữu ích! <a href="#" onclick="document.getElementById('donate-modal').style.display='block';return false;" style="color: #1976d2; text-decoration: none;">Ủng hộ mình nhé ☕❤️</a>
+    Thấy công cụ hữu ích? <a href="#" onclick="document.getElementById('donate-modal').style.display='block';return false;" style="color: #1976d2; text-decoration: none;">Ủng hộ mình nhé ☕❤️</a>
     <div style="margin-top: 5px; font-size: 12px;">
       <a href="https://johnnytrading.com" target="_blank" style="color: #1976d2; text-decoration: none;">johnnytrading.com</a> - Xem thêm công cụ hữu ích khác
     </div>
@@ -1477,13 +1787,13 @@
           <div style="flex: 1; min-width: 200px; max-width: 280px;">
             <h4 style="margin: 0 0 8px; font-size: 15px; color: #555;">Ví Crypto</h4>
             <div style="text-align: left; font-size: 12px; background: #f9f9f9; padding: 10px; border-radius: 5px;">
-              <p style="margin: 5px 0;"><strong>USDT, BNB, ARB, OP, ETH :</strong><br>
+              <p style="margin: 5px 0;"><strong>USDT (BNB, ARB, OP, ETH):</strong><br>
               <span style="word-break: break-all; color: #555; font-family: monospace;">0xef349438ffa31b0c252c7fcb0ac8910537df6a75</span></p>
               
-              <p style="margin: 10px 0 5px;"><strong>USDT (MẠNG SOL):</strong><br>
+              <p style="margin: 10px 0 5px;"><strong>USDT (SOL):</strong><br>
               <span style="word-break: break-all; color: #555; font-family: monospace;">AErTASzb46sfe5eqbQ3dMuS3uiX4oFe1QTXxpAAbeYVh</span></p>
               
-              <p style="margin: 10px 0 5px;"><strong>USDT (MẠNG TON):</strong><br>
+              <p style="margin: 10px 0 5px;"><strong>USDT (TON):</strong><br>
               <span style="word-break: break-all; color: #555; font-family: monospace;">UQATqTW71i59pkWFnTAv9x0LAZyeH-8M898UAfPUM-gIO7jO</span></p>
             </div>
           </div>
